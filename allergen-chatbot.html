@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Bella Cucina — Menu Assistant</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:      #fdf8f2;
+      --parchment:  #f5ede0;
+      --terracotta: #c0552a;
+      --terracotta-dark: #9e3f1a;
+      --gold:       #b8842a;
+      --brown:      #4a2e14;
+      --text:       #2e1f0e;
+      --muted:      #8a6f52;
+      --bubble-bot: #ffffff;
+      --bubble-user:#c0552a;
+      --shadow:     rgba(74, 46, 20, 0.12);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--cream);
+      font-family: 'Georgia', serif;
+      color: var(--text);
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--brown);
+      color: var(--cream);
+      padding: 14px 20px 12px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    header h1 {
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      font-weight: normal;
+      font-style: italic;
+    }
+    header p {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-top: 2px;
+      font-style: normal;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* ── Suggestion chips ── */
+    #chips {
+      background: var(--parchment);
+      padding: 10px 14px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      border-bottom: 1px solid rgba(74, 46, 20, 0.12);
+    }
+    #chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0;
+      background: var(--cream);
+      border: 1px solid var(--gold);
+      color: var(--brown);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+      white-space: nowrap;
+      transition: background 0.18s, color 0.18s;
+    }
+    .chip:hover, .chip:active {
+      background: var(--terracotta);
+      color: #fff;
+      border-color: var(--terracotta);
+    }
+
+    /* ── Chat area ── */
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      max-width: 82%;
+    }
+    .message.bot  { align-self: flex-start; }
+    .message.user { align-self: flex-end; align-items: flex-end; }
+
+    .bubble {
+      padding: 11px 15px;
+      border-radius: 18px;
+      font-size: 0.93rem;
+      line-height: 1.55;
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+    .message.bot .bubble {
+      background: var(--bubble-bot);
+      border-bottom-left-radius: 4px;
+      color: var(--text);
+      border: 1px solid rgba(74, 46, 20, 0.1);
+    }
+    .message.user .bubble {
+      background: var(--bubble-user);
+      border-bottom-right-radius: 4px;
+      color: #fff;
+    }
+
+    .label {
+      font-size: 0.65rem;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+    .message.user .label { color: var(--muted); }
+
+    /* ── Typing indicator ── */
+    .typing-bubble {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 13px 18px;
+    }
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40%           { transform: translateY(-6px); }
+    }
+
+    /* ── Input bar ── */
+    #input-area {
+      background: var(--parchment);
+      border-top: 1px solid rgba(74, 46, 20, 0.15);
+      padding: 10px 14px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+    #user-input {
+      flex: 1;
+      border: 1px solid rgba(74, 46, 20, 0.25);
+      border-radius: 22px;
+      padding: 10px 16px;
+      font-size: 0.93rem;
+      font-family: 'Georgia', serif;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      resize: none;
+      min-height: 42px;
+      max-height: 120px;
+      overflow-y: auto;
+      line-height: 1.4;
+      transition: border-color 0.18s;
+    }
+    #user-input:focus { border-color: var(--terracotta); }
+    #user-input::placeholder { color: var(--muted); font-style: italic; }
+
+    #send-btn {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.18s;
+    }
+    #send-btn:hover { background: var(--terracotta-dark); }
+    #send-btn svg { fill: #fff; width: 18px; height: 18px; }
+
+    /* ── Disclaimer ── */
+    #disclaimer {
+      text-align: center;
+      font-size: 0.67rem;
+      color: var(--muted);
+      font-family: 'Arial', sans-serif;
+      padding: 6px 14px 10px;
+      background: var(--parchment);
+      line-height: 1.4;
+    }
+
+    /* ── Layout wrapper ── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+    }
+    #scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Bella Cucina</h1>
+    <p>Menu Assistant</p>
+  </header>
+
+  <div id="chips">
+    <button class="chip" onclick="sendChip('Is the Chicken Piccata gluten-free?')">Piccata — Gluten-free?</button>
+    <button class="chip" onclick="sendChip('Does Rigatoni alla Norma contain dairy?')">Norma — Dairy?</button>
+    <button class="chip" onclick="sendChip('Is Osso Buco safe for nut allergies?')">Osso Buco — Nuts?</button>
+    <button class="chip" onclick="sendChip('Which dishes are vegetarian?')">Vegetarian options?</button>
+    <button class="chip" onclick="sendChip('What contains gluten on the menu?')">Gluten on menu?</button>
+    <button class="chip" onclick="sendChip('Does anything contain fish or shellfish?')">Fish/shellfish?</button>
+  </div>
+
+  <div id="scroll-area">
+    <div id="chat"></div>
+  </div>
+
+  <div id="input-area">
+    <textarea id="user-input" rows="1" placeholder="Ask about ingredients or allergens…" autocomplete="off"></textarea>
+    <button id="send-btn" aria-label="Send">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="disclaimer">
+    Always inform your server of severe allergies. This assistant is for guidance only.
+  </div>
+</div>
+
+<script>
+  const chat = document.getElementById('chat');
+  const input = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  // Conversation history sent to the API
+  const history = [];
+
+  // ── Render a message bubble ──
+  function addMessage(role, text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `message ${role}`;
+
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = role === 'bot' ? 'Bella Cucina' : 'You';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(bubble);
+    chat.appendChild(wrapper);
+    scrollToBottom();
+    return bubble;
+  }
+
+  // ── Typing indicator ──
+  let typingEl = null;
+  function showTyping() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'message bot';
+    wrapper.id = 'typing-wrapper';
+
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = 'Bella Cucina';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble typing-bubble';
+    bubble.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(bubble);
+    chat.appendChild(wrapper);
+    scrollToBottom();
+    typingEl = wrapper;
+  }
+  function hideTyping() {
+    if (typingEl) { typingEl.remove(); typingEl = null; }
+  }
+
+  function scrollToBottom() {
+    const area = document.getElementById('scroll-area');
+    area.scrollTop = area.scrollHeight;
+  }
+
+  // ── Welcome message ──
+  addMessage('bot',
+    'Benvenuto! I\'m your Bella Cucina menu assistant. Tonight we\'re serving:\n\n' +
+    '• Chicken Piccata\n' +
+    '• Rigatoni alla Norma\n' +
+    '• Osso Buco\n\n' +
+    'Ask me anything about ingredients, allergens, or dietary needs — I\'m here to help!'
+  );
+
+  // ── Send a message ──
+  async function sendMessage(text) {
+    text = text.trim();
+    if (!text) return;
+
+    addMessage('user', text);
+    history.push({ role: 'user', content: text });
+
+    input.value = '';
+    input.style.height = 'auto';
+    showTyping();
+    sendBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      const reply = data.reply;
+
+      hideTyping();
+      addMessage('bot', reply);
+      history.push({ role: 'assistant', content: reply });
+
+    } catch (err) {
+      hideTyping();
+      addMessage('bot', 'Sorry, something went wrong. Please try again or ask your server for help.');
+      console.error(err);
+      // Remove the failed user message from history so it doesn't corrupt context
+      history.pop();
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  function sendChip(text) { sendMessage(text); }
+
+  // ── Event listeners ──
+  sendBtn.addEventListener('click', () => sendMessage(input.value));
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input.value);
+    }
+  });
+
+  // Auto-grow textarea
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+</script>
+</body>
+</html>

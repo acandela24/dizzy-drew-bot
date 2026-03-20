@@ -1,0 +1,8 @@
+{
+  "name": "bella-cucina-allergen-chatbot",
+  "version": "1.0.0",
+  "description": "Restaurant allergen chatbot for Bella Cucina, powered by Claude AI",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}

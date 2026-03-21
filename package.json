@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "Restaurant allergen chatbot for Bella Cucina, powered by Claude AI",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0"
+    "@anthropic-ai/sdk": "^0.52.0"
   }
 }

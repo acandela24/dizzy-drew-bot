@@ -27,6 +27,10 @@ Contains alcohol (white wine). Not vegetarian.
 Not gluten-free. Not dairy-free.
 Nut-free.`;
 
+// Zero-config: Netlify AI Gateway automatically injects ANTHROPIC_API_KEY
+// and ANTHROPIC_BASE_URL, so no manual key management is needed.
+const client = new Anthropic();
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
@@ -50,20 +54,9 @@ exports.handler = async (event) => {
     };
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Server misconfiguration: missing API key' }),
-    };
-  }
-
   try {
-    const client = new Anthropic({ apiKey });
-
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       system: SYSTEM_PROMPT,
       messages,

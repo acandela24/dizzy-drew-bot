@@ -8,7 +8,7 @@ A mobile-friendly restaurant allergen chatbot. Guests scan a QR code at their ta
 
 ```
 .
-├── allergen-chatbot.html   # Single-file frontend (mobile-first)
+├── index.html              # Single-file frontend (mobile-first)
 ├── functions/
 │   └── chat.js             # Netlify serverless function (Claude API call)
 ├── netlify.toml            # Netlify routing + build config
@@ -89,15 +89,15 @@ cp .env.example .env    # add your real API key to .env
 netlify dev             # starts on http://localhost:8888
 ```
 
-Open `http://localhost:8888/allergen-chatbot.html` in your browser.
+Open `http://localhost:8888` in your browser.
 
 ---
 
 ## Customizing for Another Restaurant
 
 1. **Update the menu data** in `functions/chat.js` inside `SYSTEM_PROMPT`.
-2. **Update the dish names** in the chip buttons inside `allergen-chatbot.html`.
-3. **Change the restaurant name** in the `<title>`, `<header>`, and the welcome message in `allergen-chatbot.html`.
+2. **Update the dish names** in the chip buttons inside `index.html`.
+3. **Change the restaurant name** in the `<title>`, `<header>`, and the welcome message in `index.html`.
 4. Redeploy — done.
 
 ---

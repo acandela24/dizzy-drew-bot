@@ -1,0 +1,1 @@
+{\n  "functions": {\n    "api/*": {\n      "memory": 128,\n      "maxDuration": 10,\n      "runtime": "nodejs16.x"\n    }\n  }\n}

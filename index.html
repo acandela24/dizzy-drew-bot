@@ -2,387 +2,301 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Bella Cucina — Menu Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drew's Restaurant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --cream:      #fdf8f2;
-      --parchment:  #f5ede0;
-      --terracotta: #c0552a;
-      --terracotta-dark: #9e3f1a;
-      --gold:       #b8842a;
-      --brown:      #4a2e14;
-      --text:       #2e1f0e;
-      --muted:      #8a6f52;
-      --bubble-bot: #ffffff;
-      --bubble-user:#c0552a;
-      --shadow:     rgba(74, 46, 20, 0.12);
-    }
-
-    html, body {
-      height: 100%;
-      background: var(--cream);
-      font-family: 'Georgia', serif;
-      color: var(--text);
-    }
-
-    /* ── Header ── */
-    header {
-      background: var(--brown);
-      color: var(--cream);
-      padding: 14px 20px 12px;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 2px 8px var(--shadow);
-    }
-    header h1 {
-      font-size: 1.25rem;
-      letter-spacing: 0.08em;
-      font-weight: normal;
-      font-style: italic;
-    }
-    header p {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-top: 2px;
-      font-style: normal;
-      font-family: 'Arial', sans-serif;
-    }
-
-    /* ── Suggestion chips ── */
-    #chips {
-      background: var(--parchment);
-      padding: 10px 14px;
+    body {
+      font-family: 'Lato', sans-serif;
+      background: #1a0a00;
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.01) 0px,
+        rgba(255,255,255,0.01) 1px,
+        transparent 1px,
+        transparent 12px
+      );
+      min-height: 100vh;
       display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      border-bottom: 1px solid rgba(74, 46, 20, 0.12);
-    }
-    #chips::-webkit-scrollbar { display: none; }
-    .chip {
-      flex-shrink: 0;
-      background: var(--cream);
-      border: 1px solid var(--gold);
-      color: var(--brown);
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      font-family: 'Arial', sans-serif;
-      white-space: nowrap;
-      transition: background 0.18s, color 0.18s;
-    }
-    .chip:hover, .chip:active {
-      background: var(--terracotta);
-      color: #fff;
-      border-color: var(--terracotta);
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
     }
 
-    /* ── Chat area ── */
-    #chat {
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .flag-bar {
+      display: flex;
+      width: 60px;
+      height: 4px;
+      margin: 0 auto 14px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .flag-bar span { flex: 1; }
+    .flag-bar .g { background: #009246; }
+    .flag-bar .w { background: #ffffff; }
+    .flag-bar .r { background: #ce2b37; }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: #f5e6c8;
+      letter-spacing: 0.5px;
+    }
+
+    .header p {
+      font-size: 12px;
+      color: #a0846a;
+      margin-top: 5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #c8a97e, transparent);
+      margin: 10px auto 0;
+    }
+
+    .chat-box {
+      width: 100%;
+      max-width: 420px;
+      background: #2a1200;
+      border-radius: 16px;
+      border: 1px solid #5a3010;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 68vh;
+    }
+
+    .messages {
       flex: 1;
       overflow-y: auto;
-      padding: 18px 14px 24px;
+      padding: 18px 14px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
     }
+    .messages::-webkit-scrollbar { width: 0; }
 
-    .message {
-      display: flex;
-      flex-direction: column;
+    .msg {
       max-width: 82%;
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 300;
     }
-    .message.bot  { align-self: flex-start; }
-    .message.user { align-self: flex-end; align-items: flex-end; }
 
-    .bubble {
-      padding: 11px 15px;
-      border-radius: 18px;
-      font-size: 0.93rem;
-      line-height: 1.55;
-      box-shadow: 0 1px 4px var(--shadow);
+    .msg.bot {
+      background: #3a1a05;
+      color: #f0dfc0;
+      align-self: flex-start;
+      border-radius: 16px 16px 16px 4px;
+      border: 1px solid #5a3010;
     }
-    .message.bot .bubble {
-      background: var(--bubble-bot);
-      border-bottom-left-radius: 4px;
-      color: var(--text);
-      border: 1px solid rgba(74, 46, 20, 0.1);
-    }
-    .message.user .bubble {
-      background: var(--bubble-user);
-      border-bottom-right-radius: 4px;
+
+    .msg.user {
+      background: #ce2b37;
       color: #fff;
+      align-self: flex-end;
+      border-radius: 16px 16px 4px 16px;
     }
 
-    .label {
-      font-size: 0.65rem;
-      font-family: 'Arial', sans-serif;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-      color: var(--muted);
-    }
-    .message.user .label { color: var(--muted); }
-
-    /* ── Typing indicator ── */
-    .typing-bubble {
+    .chips {
       display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 13px 18px;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      background: transparent;
+      border: 1px solid #5a3010;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #c8a97e;
+      font-family: 'Lato', sans-serif;
+      letter-spacing: 0.3px;
+    }
+    .chip:hover { background: #3a1a05; }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid #5a3010;
+      background: #220e00;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px 14px;
+      background: #3a1a05;
+      border: 1px solid #5a3010;
+      border-radius: 24px;
+      font-size: 14px;
+      color: #f0dfc0;
+      outline: none;
+      font-family: 'Lato', sans-serif;
+    }
+    input::placeholder { color: #7a5a40; }
+    input:focus { border-color: #c8a97e; }
+
+    button {
+      background: #ce2b37;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      padding: 10px 18px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    button:disabled { opacity: 0.4; }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 12px 14px;
+      background: #3a1a05;
+      border: 1px solid #5a3010;
+      border-radius: 16px 16px 16px 4px;
+      align-self: flex-start;
     }
     .dot {
-      width: 7px; height: 7px;
+      width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--muted);
-      animation: bounce 1.2s infinite ease-in-out;
+      background: #c8a97e;
+      animation: bounce 1.2s infinite;
     }
     .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bounce {
-      0%, 80%, 100% { transform: translateY(0); }
-      40%           { transform: translateY(-6px); }
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
     }
 
-    /* ── Input bar ── */
-    #input-area {
-      background: var(--parchment);
-      border-top: 1px solid rgba(74, 46, 20, 0.15);
-      padding: 10px 14px;
-      display: flex;
-      gap: 8px;
-      align-items: flex-end;
-    }
-    #user-input {
-      flex: 1;
-      border: 1px solid rgba(74, 46, 20, 0.25);
-      border-radius: 22px;
-      padding: 10px 16px;
-      font-size: 0.93rem;
-      font-family: 'Georgia', serif;
-      background: #fff;
-      color: var(--text);
-      outline: none;
-      resize: none;
-      min-height: 42px;
-      max-height: 120px;
-      overflow-y: auto;
-      line-height: 1.4;
-      transition: border-color 0.18s;
-    }
-    #user-input:focus { border-color: var(--terracotta); }
-    #user-input::placeholder { color: var(--muted); font-style: italic; }
-
-    #send-btn {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      background: var(--terracotta);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.18s;
-    }
-    #send-btn:hover { background: var(--terracotta-dark); }
-    #send-btn svg { fill: #fff; width: 18px; height: 18px; }
-
-    /* ── Disclaimer ── */
-    #disclaimer {
-      text-align: center;
-      font-size: 0.67rem;
-      color: var(--muted);
-      font-family: 'Arial', sans-serif;
-      padding: 6px 14px 10px;
-      background: var(--parchment);
-      line-height: 1.4;
-    }
-
-    /* ── Layout wrapper ── */
-    #app {
-      display: flex;
-      flex-direction: column;
-      height: 100dvh;
-    }
-    #scroll-area {
-      flex: 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
+    .footer {
+      margin-top: 14px;
+      font-size: 11px;
+      color: #5a3a28;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
-<div id="app">
-  <header>
-    <h1>Bella Cucina</h1>
-    <p>Menu Assistant</p>
-  </header>
 
-  <div id="chips">
-    <button class="chip" onclick="sendChip('Is the Chicken Piccata gluten-free?')">Piccata — Gluten-free?</button>
-    <button class="chip" onclick="sendChip('Does Rigatoni alla Norma contain dairy?')">Norma — Dairy?</button>
-    <button class="chip" onclick="sendChip('Is Osso Buco safe for nut allergies?')">Osso Buco — Nuts?</button>
-    <button class="chip" onclick="sendChip('Which dishes are vegetarian?')">Vegetarian options?</button>
-    <button class="chip" onclick="sendChip('What contains gluten on the menu?')">Gluten on menu?</button>
-    <button class="chip" onclick="sendChip('Does anything contain fish or shellfish?')">Fish/shellfish?</button>
+  <div class="header">
+    <div class="flag-bar">
+      <span class="g"></span>
+      <span class="w"></span>
+      <span class="r"></span>
+    </div>
+    <h1>Drew's Restaurant</h1>
+    <p>Ask about allergens &amp; ingredients</p>
+    <div class="divider"></div>
   </div>
 
-  <div id="scroll-area">
-    <div id="chat"></div>
+  <div class="chat-box">
+    <div class="messages" id="messages">
+      <div class="chips" id="chips">
+        <span class="chip" onclick="sendChip(this)">Is anything gluten-free?</span>
+        <span class="chip" onclick="sendChip(this)">Any vegetarian dishes?</span>
+        <span class="chip" onclick="sendChip(this)">Does the pizza have dairy?</span>
+        <span class="chip" onclick="sendChip(this)">Any peanuts on the menu?</span>
+      </div>
+      <div class="msg bot">Benvenuto! I'm here to help with any questions about our dishes — allergens, ingredients, or dietary needs. What can I help you with?</div>
+    </div>
+    <div class="input-row">
+      <input id="input" type="text" placeholder="Ask about allergens or ingredients..." onkeydown="if(event.key==='Enter') send()" />
+      <button id="btn" onclick="send()">Ask</button>
+    </div>
   </div>
 
-  <div id="input-area">
-    <textarea id="user-input" rows="1" placeholder="Ask about ingredients or allergens…" autocomplete="off"></textarea>
-    <button id="send-btn" aria-label="Send">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-      </svg>
-    </button>
-  </div>
+  <p class="footer">Est. 2024 &nbsp;·&nbsp; Drew's Restaurant</p>
 
-  <div id="disclaimer">
-    Always inform your server of severe allergies. This assistant is for guidance only.
-  </div>
-</div>
+  <script>
+    let history = [];
 
-<script>
-  const chat = document.getElementById('chat');
-  const input = document.getElementById('user-input');
-  const sendBtn = document.getElementById('send-btn');
+    async function send() {
+      const input = document.getElementById('input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+      document.getElementById('chips').style.display = 'none';
+      addMsg(msg, 'user');
+      document.getElementById('btn').disabled = true;
 
-  // Conversation history sent to the API
-  const history = [];
+      const typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.id = 'typing';
+      typing.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+      document.getElementById('messages').appendChild(typing);
+      scrollBottom();
 
-  // ── Render a message bubble ──
-  function addMessage(role, text) {
-    const wrapper = document.createElement('div');
-    wrapper.className = `message ${role}`;
-
-    const label = document.createElement('div');
-    label.className = 'label';
-    label.textContent = role === 'bot' ? 'Bella Cucina' : 'You';
-
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.textContent = text;
-
-    wrapper.appendChild(label);
-    wrapper.appendChild(bubble);
-    chat.appendChild(wrapper);
-    scrollToBottom();
-    return bubble;
-  }
-
-  // ── Typing indicator ──
-  let typingEl = null;
-  function showTyping() {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'message bot';
-    wrapper.id = 'typing-wrapper';
-
-    const label = document.createElement('div');
-    label.className = 'label';
-    label.textContent = 'Bella Cucina';
-
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble typing-bubble';
-    bubble.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-
-    wrapper.appendChild(label);
-    wrapper.appendChild(bubble);
-    chat.appendChild(wrapper);
-    scrollToBottom();
-    typingEl = wrapper;
-  }
-  function hideTyping() {
-    if (typingEl) { typingEl.remove(); typingEl = null; }
-  }
-
-  function scrollToBottom() {
-    const area = document.getElementById('scroll-area');
-    area.scrollTop = area.scrollHeight;
-  }
-
-  // ── Welcome message ──
-  addMessage('bot',
-    'Benvenuto! I\'m your Bella Cucina menu assistant. Tonight we\'re serving:\n\n' +
-    '• Chicken Piccata\n' +
-    '• Rigatoni alla Norma\n' +
-    '• Osso Buco\n\n' +
-    'Ask me anything about ingredients, allergens, or dietary needs — I\'m here to help!'
-  );
-
-  // ── Send a message ──
-  async function sendMessage(text) {
-    text = text.trim();
-    if (!text) return;
-
-    addMessage('user', text);
-    history.push({ role: 'user', content: text });
-
-    input.value = '';
-    input.style.height = 'auto';
-    showTyping();
-    sendBtn.disabled = true;
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history })
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${res.status}`);
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg, history })
+        });
+        const data = await res.json();
+        document.getElementById('typing')?.remove();
+        addMsg(data.reply, 'bot');
+        history.push({ role: 'user', content: msg });
+        history.push({ role: 'assistant', content: data.reply });
+      } catch(e) {
+        document.getElementById('typing')?.remove();
+        addMsg("Sorry, something went wrong. Please try again.", 'bot');
       }
 
-      const data = await res.json();
-      const reply = data.reply;
-
-      hideTyping();
-      addMessage('bot', reply);
-      history.push({ role: 'assistant', content: reply });
-
-    } catch (err) {
-      hideTyping();
-      addMessage('bot', 'Sorry, something went wrong. Please try again or ask your server for help.');
-      console.error(err);
-      // Remove the failed user message from history so it doesn't corrupt context
-      history.pop();
-    } finally {
-      sendBtn.disabled = false;
-      input.focus();
+      document.getElementById('btn').disabled = false;
     }
-  }
 
-  function sendChip(text) { sendMessage(text); }
-
-  // ── Event listeners ──
-  sendBtn.addEventListener('click', () => sendMessage(input.value));
-
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage(input.value);
+    function sendChip(el) {
+      document.getElementById('input').value = el.textContent;
+      send();
     }
-  });
 
-  // Auto-grow textarea
-  input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-  });
-</script>
+    function addMsg(text, role) {
+      const div = document.createElement('div');
+      div.className = `msg ${role}`;
+      div.textContent = text;
+      document.getElementById('messages').appendChild(div);
+      scrollBottom();
+    }
+
+    function scrollBottom() {
+      const m = document.getElementById('messages');
+      m.scrollTop = m.scrollHeight;
+    }
+  </script>
 </body>
 </html>
+```
+
+---
+
+**FILE 2 — replace just the `SYSTEM_PROMPT` section at the top of `server.js`** (everything between the backticks):
+```
+You are a warm, friendly waiter at Drew's Restaurant, a classic Italian trattoria. You help guests with questions about allergens and ingredients in our dishes. Speak naturally and conversationally, like a real person — never use bullet points, dashes, asterisks, or lists. Keep answers short, 2-3 sentences. If someone asks a simple yes or no question, just answer it directly without listing every ingredient. Only mention specific ingredients if the person asks what's in a dish. Always end with: "Let your server know if you have a severe allergy and we'll take extra care for you."
+
+DISH 1 — SPAGHETTI CARBONARA: Contains gluten (pasta), eggs, dairy (Pecorino and Parmesan), and pork (guanciale). Not gluten-free, not vegetarian, not dairy-free.
+
+DISH 2 — MARGHERITA PIZZA: Contains gluten (wheat crust) and dairy (fresh mozzarella). Vegetarian. Not gluten-free, not dairy-free. Gluten-free crust sometimes available, ask your server.
+
+DISH 3 — RISOTTO AI FUNGHI: Made with Arborio rice and mushrooms, finished with butter and Parmesan. Gluten-free. Vegetarian if made with vegetable broth. Not dairy-free.

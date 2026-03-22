@@ -52,7 +52,8 @@ app.post('/chat', async (req, res) => {
   ];
 
   const response = await client.messages.create({
-    model: 'claude-opus-4-6',    
+    model: 'claude-opus-4-6', 
+    max_toxens: 500,
     system: SYSTEM_PROMPT,
     messages
   });

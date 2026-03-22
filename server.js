@@ -53,7 +53,7 @@ app.post('/chat', async (req, res) => {
 
   const response = await client.messages.create({
     model: 'claude-opus-4-6', 
-    max_toxens: 500,
+    max_tokens: 500,
     system: SYSTEM_PROMPT,
     messages
   });

@@ -1,14 +1,20 @@
 {
-  "name": "restaurant-allergy-bot",
+  "name": "flanigans-chatbot",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Flanigan's Seafood Bar & Grill Menu Chatbot with Admin Panel",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
-    "express": "^4.18.0"
+    "express": "^4.18.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "engines": {
+    "node": ">=20.x"
   }
 }

@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Cheeseburger",
+    "ingredients": "Ground beef (80/20), salt, black pepper, wheat burger bun, cheddar cheese slices, lettuce, tomato, onion, pickles, ketchup, mustard, mayonnaise",
+    "allergens": "GLUTEN (wheat bun), DAIRY (cheddar cheese), EGGS (mayonnaise)",
+    "dietary": "NOT gluten-free, NOT vegetarian, NOT vegan, NOT dairy-free, NOT egg-free"
+  },
+  {
+    "id": 2,
+    "name": "Buffalo Wings",
+    "ingredients": "Chicken wings, all-purpose flour (optional coating), frying oil, butter, hot sauce, garlic powder, salt",
+    "allergens": "GLUTEN (flour coating), DAIRY (butter)",
+    "dietary": "NOT gluten-free, NOT vegetarian, NOT vegan, NOT dairy-free"
+  },
+  {
+    "id": 3,
+    "name": "BBQ Ribs",
+    "ingredients": "Pork ribs, paprika, brown sugar, salt, black pepper, garlic powder, BBQ sauce",
+    "allergens": "POSSIBLE SOY and/or GLUTEN depending on BBQ sauce brand — guests with severe allergies should check with their server",
+    "dietary": "NOT vegetarian, NOT vegan. No major allergens in the dry rub itself."
+  },
+  {
+    "id": 4,
+    "name": "Chicken Quesadilla",
+    "ingredients": "Flour tortillas (wheat), grilled chicken breast, shredded cheese blend, bell peppers, onions, sour cream, salsa",
+    "allergens": "GLUTEN (flour tortilla), DAIRY (cheese blend, sour cream)",
+    "dietary": "NOT gluten-free, NOT vegetarian, NOT vegan, NOT dairy-free"
+  },
+  {
+    "id": 5,
+    "name": "Fish Tacos",
+    "ingredients": "White fish (tilapia or cod), taco seasoning, corn tortillas, cabbage slaw, lime, sour cream or crema",
+    "allergens": "FISH, DAIRY (sour cream/crema)",
+    "dietary": "GLUTEN-FREE (corn tortillas — best GF option on the menu!), NOT vegetarian, NOT vegan, NOT dairy-free"
+  }
+]

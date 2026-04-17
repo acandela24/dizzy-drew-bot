@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Flanigan's Menu Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:   #006B46;
+      --green-dark: #004d31;
+      --accent:  #E8632A;
+      --bg:      #0D2B1F;
+      --surface: #112E21;
+      --card:    #1A3D2B;
+      --border:  #1E4A33;
+      --text:    #F5F0E8;
+      --muted:   #B8C4B0;
+      --danger:  #c0392b;
+      --font-d: 'Lobster', cursive;
+      --font-b: 'Lato', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: var(--font-b);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Login screen ── */
+    #login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .login-card h1 {
+      font-family: var(--font-d);
+      font-size: 1.9rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .login-card p {
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .login-card label {
+      display: block;
+      text-align: left;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .login-card input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: var(--font-b);
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .login-card input:focus { border-color: var(--green); }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px;
+      font-family: var(--font-b);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover:not(:disabled) { background: #008055; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    #login-error {
+      color: #f1948a;
+      font-size: 0.82rem;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+
+    /* ── Admin screen ── */
+    #admin-screen { display: none; }
+
+    .admin-header {
+      background: var(--green);
+      border-bottom: 3px solid var(--green-dark);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .admin-header h1 {
+      font-family: var(--font-d);
+      font-size: 1.6rem;
+    }
+
+    .admin-header span {
+      font-size: 0.75rem;
+      color: #ffe0c8;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .btn-logout {
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-family: var(--font-b);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .btn-logout:hover { background: rgba(0,0,0,0.5); }
+
+    .admin-body {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 20px;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── Dish cards ── */
+    .dish-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .dish-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .dish-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .dish-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .dish-actions { display: flex; gap: 8px; }
+
+    .btn-edit, .btn-delete {
+      border: none;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-family: var(--font-b);
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-edit { background: var(--green); color: #fff; }
+    .btn-edit:hover { opacity: 0.85; }
+    .btn-delete { background: var(--danger); color: #fff; }
+    .btn-delete:hover { opacity: 0.85; }
+
+    .dish-field {
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .dish-field .label {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+
+    /* ── Add / Edit form ── */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 20px;
+    }
+
+    .form-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+
+    .form-row {
+      margin-bottom: 14px;
+    }
+
+    .form-row label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .form-row input, .form-row textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 13px;
+      font-family: var(--font-b);
+      font-size: 0.88rem;
+      color: var(--text);
+      outline: none;
+      resize: vertical;
+    }
+
+    .form-row input:focus, .form-row textarea:focus { border-color: var(--green); }
+
+    .form-row textarea { min-height: 72px; }
+
+    .form-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+    .btn-save {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 22px;
+      font-family: var(--font-b);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-save:hover { background: #008055; }
+
+    .btn-cancel {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px 18px;
+      font-family: var(--font-b);
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    .btn-cancel:hover { color: var(--text); }
+
+    .btn-add-dish {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 9px 18px;
+      font-family: var(--font-b);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .btn-add-dish:hover { opacity: 0.9; }
+
+    #status-msg {
+      background: #1b5e3e;
+      color: #a8f0c6;
+      border: 1px solid #2e8b57;
+      border-radius: 7px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    #status-msg.error {
+      background: #5e1b1b;
+      color: #f0a8a8;
+      border-color: #8b2e2e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h1>⚓ Flanigan's</h1>
+      <p>Menu Admin Panel</p>
+      <label for="admin-user">Username</label>
+      <input type="text" id="admin-user" placeholder="admin" autocomplete="username" />
+      <label for="admin-pass">Password</label>
+      <input type="password" id="admin-pass" placeholder="••••••••" autocomplete="current-password" />
+      <button class="btn-primary" id="login-btn">Log In</button>
+      <div id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- Admin panel -->
+  <div id="admin-screen">
+    <div class="admin-header">
+      <div>
+        <h1>⚓ Flanigan's</h1>
+        <span>Menu Editor</span>
+      </div>
+      <button class="btn-logout" id="logout-btn">Log Out</button>
+    </div>
+
+    <div class="admin-body">
+      <div id="status-msg"></div>
+
+      <p class="section-title">Current Menu</p>
+      <button class="btn-add-dish" id="add-dish-btn">+ Add New Dish</button>
+      <div class="dish-list" id="dish-list"></div>
+
+      <div class="form-card" id="dish-form" style="display:none;">
+        <h3 id="form-title">Add Dish</h3>
+        <input type="hidden" id="form-id" />
+        <div class="form-row">
+          <label for="f-name">Dish Name</label>
+          <input type="text" id="f-name" placeholder="e.g. BBQ Ribs" />
+        </div>
+        <div class="form-row">
+          <label for="f-ingredients">Ingredients</label>
+          <textarea id="f-ingredients" placeholder="List all ingredients..."></textarea>
+        </div>
+        <div class="form-row">
+          <label for="f-allergens">Allergens</label>
+          <textarea id="f-allergens" placeholder="e.g. GLUTEN (wheat bun), DAIRY (cheese)"></textarea>
+        </div>
+        <div class="form-row">
+          <label for="f-dietary">Dietary Notes</label>
+          <textarea id="f-dietary" placeholder="e.g. NOT gluten-free, NOT vegetarian"></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" id="form-save-btn">Save Dish</button>
+          <button class="btn-cancel" id="form-cancel-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginScreen  = document.getElementById('login-screen');
+    const adminScreen  = document.getElementById('admin-screen');
+    const loginBtn     = document.getElementById('login-btn');
+    const logoutBtn    = document.getElementById('logout-btn');
+    const loginError   = document.getElementById('login-error');
+    const dishList     = document.getElementById('dish-list');
+    const addDishBtn   = document.getElementById('add-dish-btn');
+    const dishForm     = document.getElementById('dish-form');
+    const formTitle    = document.getElementById('form-title');
+    const formId       = document.getElementById('form-id');
+    const fName        = document.getElementById('f-name');
+    const fIngredients = document.getElementById('f-ingredients');
+    const fAllergens   = document.getElementById('f-allergens');
+    const fDietary     = document.getElementById('f-dietary');
+    const formSaveBtn  = document.getElementById('form-save-btn');
+    const formCancelBtn= document.getElementById('form-cancel-btn');
+    const statusMsg    = document.getElementById('status-msg');
+
+    let token = localStorage.getItem('flanigans_admin_token');
+
+    // ── Auth ────────────────────────────────────────────────────────────────
+
+    if (token) showAdmin();
+
+    loginBtn.addEventListener('click', async () => {
+      const username = document.getElementById('admin-user').value.trim();
+      const password = document.getElementById('admin-pass').value;
+      loginError.textContent = '';
+      loginBtn.disabled = true;
+      try {
+        const res = await fetch('/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          loginError.textContent = data.error || 'Login failed.';
+        } else {
+          token = data.token;
+          localStorage.setItem('flanigans_admin_token', token);
+          showAdmin();
+        }
+      } catch {
+        loginError.textContent = 'Could not reach server.';
+      } finally {
+        loginBtn.disabled = false;
+      }
+    });
+
+    document.getElementById('admin-pass').addEventListener('keydown', e => {
+      if (e.key === 'Enter') loginBtn.click();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('flanigans_admin_token');
+      token = null;
+      adminScreen.style.display = 'none';
+      loginScreen.style.display = 'flex';
+    });
+
+    // ── Admin ────────────────────────────────────────────────────────────────
+
+    async function showAdmin() {
+      loginScreen.style.display = 'none';
+      adminScreen.style.display = 'block';
+      await loadMenu();
+    }
+
+    function authHeaders() {
+      return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+    }
+
+    async function loadMenu() {
+      try {
+        const res = await fetch('/admin/menu', { headers: authHeaders() });
+        if (res.status === 401) { logoutBtn.click(); return; }
+        const menu = await res.json();
+        renderDishes(menu);
+      } catch {
+        showStatus('Failed to load menu.', true);
+      }
+    }
+
+    function renderDishes(menu) {
+      dishList.innerHTML = '';
+      if (menu.length === 0) {
+        dishList.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">No dishes yet. Add one above!</p>';
+        return;
+      }
+      menu.forEach(dish => {
+        const card = document.createElement('div');
+        card.className = 'dish-card';
+        card.innerHTML = `
+          <div class="dish-card-header">
+            <span class="dish-name">${escHtml(dish.name)}</span>
+            <div class="dish-actions">
+              <button class="btn-edit" data-id="${dish.id}">Edit</button>
+              <button class="btn-delete" data-id="${dish.id}">Delete</button>
+            </div>
+          </div>
+          <div class="dish-field"><span class="label">Ingredients</span>${escHtml(dish.ingredients)}</div>
+          <div class="dish-field"><span class="label">Allergens</span>${escHtml(dish.allergens)}</div>
+          <div class="dish-field"><span class="label">Dietary</span>${escHtml(dish.dietary)}</div>
+        `;
+        card.querySelector('.btn-edit').addEventListener('click', () => openEditForm(dish));
+        card.querySelector('.btn-delete').addEventListener('click', () => deleteDish(dish.id, dish.name));
+        dishList.appendChild(card);
+      });
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── Form ─────────────────────────────────────────────────────────────────
+
+    addDishBtn.addEventListener('click', () => {
+      formTitle.textContent = 'Add New Dish';
+      formId.value = '';
+      fName.value = '';
+      fIngredients.value = '';
+      fAllergens.value = '';
+      fDietary.value = '';
+      dishForm.style.display = 'block';
+      fName.focus();
+    });
+
+    function openEditForm(dish) {
+      formTitle.textContent = 'Edit Dish';
+      formId.value = dish.id;
+      fName.value = dish.name;
+      fIngredients.value = dish.ingredients;
+      fAllergens.value = dish.allergens;
+      fDietary.value = dish.dietary;
+      dishForm.style.display = 'block';
+      fName.focus();
+    }
+
+    formCancelBtn.addEventListener('click', () => {
+      dishForm.style.display = 'none';
+    });
+
+    formSaveBtn.addEventListener('click', async () => {
+      const name        = fName.value.trim();
+      const ingredients = fIngredients.value.trim();
+      const allergens   = fAllergens.value.trim();
+      const dietary     = fDietary.value.trim();
+
+      if (!name || !ingredients || !allergens || !dietary) {
+        showStatus('All fields are required.', true);
+        return;
+      }
+
+      const id = formId.value;
+      formSaveBtn.disabled = true;
+
+      try {
+        let res;
+        if (id) {
+          res = await fetch(`/admin/dishes/${id}`, {
+            method: 'PUT',
+            headers: authHeaders(),
+            body: JSON.stringify({ name, ingredients, allergens, dietary })
+          });
+        } else {
+          res = await fetch('/admin/dishes', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ name, ingredients, allergens, dietary })
+          });
+        }
+
+        if (!res.ok) {
+          const err = await res.json();
+          showStatus(err.error || 'Save failed.', true);
+        } else {
+          dishForm.style.display = 'none';
+          showStatus(id ? 'Dish updated!' : 'Dish added!');
+          await loadMenu();
+        }
+      } catch {
+        showStatus('Could not save. Check connection.', true);
+      } finally {
+        formSaveBtn.disabled = false;
+      }
+    });
+
+    async function deleteDish(id, name) {
+      if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+      try {
+        const res = await fetch(`/admin/dishes/${id}`, {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          showStatus(err.error || 'Delete failed.', true);
+        } else {
+          showStatus(`"${name}" deleted.`);
+          await loadMenu();
+        }
+      } catch {
+        showStatus('Could not delete. Check connection.', true);
+      }
+    }
+
+    function showStatus(msg, isError = false) {
+      statusMsg.textContent = msg;
+      statusMsg.className = isError ? 'error' : '';
+      statusMsg.style.display = 'block';
+      setTimeout(() => { statusMsg.style.display = 'none'; }, 3500);
+    }
+  </script>
+</body>
+</html>
